@@ -31,6 +31,24 @@ const getPort = (value = process.env.PORT) => {
 
 const PORT = getPort();
 
+const startServer = async () => {
+  try {
+    await connectDB();
+
+   const server= app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+    server.setTimeout(3500);
+  } catch (error) {
+    console.error('Failed to start server:', error.message);
+    process.exit(1);
+  }
+};
+
+
+
+startServer();
+
 module.exports = {
   connectDB,
   disconnectDB};
