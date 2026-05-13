@@ -30,22 +30,30 @@ const getPort = (value = process.env.PORT) => {
 
   return port;
 };
-
-const PORT = getPort();
-
 const startServer = async () => {
   try {
+    const PORT = getPort();
+
     await connectDB();
 
     server = app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
-    server.setTimeout(10000);
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use.`);
+      } else {
+        console.error('Server error:', error.message);
+      }
+      process.exit(1);
+    });
+    
+
+    server.setTimeout(30000);
 
   } catch (error) {
 
-    console.error('Failed to start server:', error.message);
-
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 };
@@ -62,6 +70,10 @@ const shutdown = (signal) => {
     process.exit(0);
     return;
   }
+  const shutdownTimeout = setTimeout(() => {
+    console.error('Shutdown timed out. Forcing exit.');
+    process.exit(1);
+  }, 10000);
 
   server.close(async (error) => {
     if (error) {
@@ -74,7 +86,7 @@ const shutdown = (signal) => {
       console.log('Server closed successfully.');
       process.exit(0);
     } catch (disconnectError) {
-      console.error('Error while disconnecting database:', disconnectError.message);
+      console.error('Error while disconnecting database:', disconnectError);
       process.exit(1);
     }
   });
