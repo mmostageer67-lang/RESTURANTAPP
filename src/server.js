@@ -9,7 +9,7 @@ const MAX_PORT = 65535;
 let server;
 let isShuttingDown = false;
 
-const isBlank = (value) => value === undefined  || String(value).trim() === '';
+const isBlank = (value) => value === undefined || String(value).trim() === '';
 
 const getPort = (value = process.env.PORT) => {
   if (isBlank(value)) {
@@ -30,6 +30,7 @@ const getPort = (value = process.env.PORT) => {
 
   return port;
 };
+
 const startServer = async () => {
   try {
     const PORT = getPort();
@@ -47,12 +48,10 @@ const startServer = async () => {
       }
       process.exit(1);
     });
-    
 
     server.setTimeout(30000);
 
   } catch (error) {
-
     console.error('Failed to start server:', error);
     process.exit(1);
   }
@@ -76,6 +75,8 @@ const shutdown = (signal) => {
   }, 10000);
 
   server.close(async (error) => {
+    clearTimeout(shutdownTimeout);
+
     if (error) {
       console.error('Error while closing server:', error.message);
       process.exit(1);
@@ -95,8 +96,15 @@ const shutdown = (signal) => {
 process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+  shutdown('UNHANDLED_REJECTION');
+});
+
 startServer();
 
-module.exports = {
-  connectDB,
-  disconnectDB};
