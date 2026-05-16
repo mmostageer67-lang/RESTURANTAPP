@@ -1,7 +1,7 @@
 const User = require('../user/user.model');
 
 const register = async ({ name, email, password, role, phone, address }) => {
-  const existingUser = await User.findOne({ email }).lean();
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     const error = new Error('Email already in use');
     error.statusCode = 409;
