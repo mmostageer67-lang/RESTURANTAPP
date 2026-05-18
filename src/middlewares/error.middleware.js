@@ -26,11 +26,16 @@ if (process.env.NODE_ENV === 'production') {
     });
   }
 
-  res.status(err.statusCode).json({
+ return res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
   });
 }
+
+return res.status(err.statusCode).json({
+  status: err.status,
+  message: err.message,
+});
 }
 
 module.exports = errorHandler;
