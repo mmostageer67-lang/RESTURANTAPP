@@ -5,6 +5,7 @@ const register = async ({ name, email, password, role, phone, address }) => {
   if (existingUser) {
     const error = new Error('Email already in use');
     error.statusCode = 409;
+    error.isOperational = true;
     throw error;
   }
 

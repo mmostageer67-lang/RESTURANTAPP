@@ -9,7 +9,7 @@ const errorHandler = (err, req, res, next) => {
       message: err.message,
       stack: err.stack,
     });
-  
+  }
 if (process.env.NODE_ENV === 'production') {
   if (!err.isOperational || err.statusCode === 500) {
     return res.status(500).json({
@@ -22,6 +22,7 @@ if (process.env.NODE_ENV === 'production') {
     status: err.status,
     message: err.message,
   });
-}}}
+}
+}
 
 module.exports = errorHandler;
