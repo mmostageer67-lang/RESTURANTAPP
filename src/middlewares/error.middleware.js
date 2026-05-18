@@ -1,4 +1,12 @@
 const errorHandler = (err, req, res, next) => {
+  if (err.code === 11000) {
+    const field = Object.keys(err.keyValue)[0];
+    return res.status(409).json({
+      status: 'fail',
+      message: `${field} already in use`,
+    });
+  }
+
   err.statusCode = err.statusCode || 500;
 
   err.status = err.status || 'error';

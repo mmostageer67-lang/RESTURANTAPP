@@ -13,7 +13,7 @@ const register = async ({ name, email, password, role, phone, address }) => {
     name,
     email,
     password,
-    role:  'customer',
+          role:  'customer',
     phone,
     address
   });
